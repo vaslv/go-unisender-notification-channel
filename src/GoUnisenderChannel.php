@@ -54,16 +54,11 @@ class GoUnisenderChannel {
      * @throws \Exception
      */
     protected function sendMessage(GoUnisenderMessage $message): ?array {
-        if (!is_null($message->token)) {
-            $this->api->setToken($message->token);
-        }
 
         try {
-            return $this->api->sendSms($message);
+            return $this->api->sendEmail($message);
         } catch (\Exception $e) {
-            if (!$message->silent) {
-                throw $e;
-            }
+          throw $e;
         }
 
         return NULL;

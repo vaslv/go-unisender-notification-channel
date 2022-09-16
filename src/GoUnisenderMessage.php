@@ -3,78 +3,32 @@
 namespace NotificationChannels\GoUnisender;
 
 class GoUnisenderMessage {
-    public $to;
-    public $from;
-    public $content;
-    public $token;
-    public $silent = FALSE;
+  public $to;
+  public $template;
+  public $substitutions;
 
-    /**
-     * Set API Token.
-     *
-     * @param string $token
-     *
-     * @return GoUnisenderMessage
-     */
-    public function usingApiToken(string $token): GoUnisenderMessage {
-        $this->token = $token;
+  /**
+   * Set the message's receivers.
+   *
+   * @param array|string $to
+   *
+   * @return GoUnisenderMessage
+   */
+  public function to(string $to): GoUnisenderMessage {
+    $this->to = $to;
 
-        return $this;
-    }
+    return $this;
+  }
 
-    /**
-     * Send message silently (without raising any exceptions).
-     *
-     * @param bool $flag
-     *
-     * @return GoUnisenderMessage
-     */
-    public function silent(bool $flag = TRUE): GoUnisenderMessage {
-        $this->silent = $flag;
+  public function template(string $template): GoUnisenderMessage {
+    $this->template = $template;
 
-        return $this;
-    }
+    return $this;
+  }
 
-    /**
-     * Set the message's receivers.
-     *
-     * @param array|string $to
-     *
-     * @return GoUnisenderMessage
-     */
-    public function to($to): GoUnisenderMessage {
-        if (is_array($to)) {
-            $to = implode(',', $to);
-        }
+  public function substitutions(array $substitutions): GoUnisenderMessage {
+    $this->substitutions = $substitutions;
 
-        $this->to = $to;
-
-        return $this;
-    }
-
-    /**
-     * Set the message's sender.
-     *
-     * @param string $from
-     *
-     * @return GoUnisenderMessage
-     */
-    public function from(string $from): GoUnisenderMessage {
-        $this->from = $from;
-
-        return $this;
-    }
-
-    /**
-     * Set the message's content.
-     *
-     * @param string $content
-     *
-     * @return GoUnisenderMessage
-     */
-    public function content(string $content): GoUnisenderMessage {
-        $this->content = $content;
-
-        return $this;
-    }
+    return $this;
+  }
 }

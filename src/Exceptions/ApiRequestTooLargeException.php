@@ -5,7 +5,7 @@ namespace NotificationChannels\GoUnisender\Exceptions;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\ResponseInterface;
 
-class ApiRequestTooLargeException extends \RuntimeException {
+class ApiRequestTooLargeException extends GoUnisenderException {
   protected $response;
 
   public function __construct(RequestException $exception, ResponseInterface $response) {

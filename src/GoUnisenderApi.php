@@ -94,7 +94,7 @@ class GoUnisenderApi {
     $client = $this->getClient();
 
     try {
-      $client->requestAsync('POST', $uri, [
+      $client->request('POST', $uri, [
         'headers' => $headers,
         'json' => $body,
       ]);

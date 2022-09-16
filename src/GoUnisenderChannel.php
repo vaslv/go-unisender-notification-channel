@@ -43,7 +43,7 @@ class GoUnisenderChannel {
             throw new \InvalidArgumentException('Message is not an instance of GoUnisenderMessage.');
         }
 
-        $message->to($to);
+        $message->setTo($to);
 
         return $this->sendMessage($message);
     }

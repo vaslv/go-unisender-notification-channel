@@ -33,19 +33,21 @@ class GoUnisenderChannel {
         }
 
         if (!method_exists($notification, 'toGoUnisender')) {
-            throw new \InvalidArgumentException('Method "toGoUnisender" does not exists on given notification instance.');
+          throw new \InvalidArgumentException('Method "toGoUnisender" does not exists on given notification instance.');
         }
 
-        /** @var GoUnisenderMessage $message */
-        $message = $notification->toGoUnisender($notifiable);
+      /** @var GoUnisenderMessage $message */
+      $message = $notification->toGoUnisender($notifiable);
 
-        if (!($message instanceof GoUnisenderMessage)) {
-            throw new \InvalidArgumentException('Message is not an instance of GoUnisenderMessage.');
-        }
+      if (!($message instanceof GoUnisenderMessage)) {
+        throw new \InvalidArgumentException('Message is not an instance of GoUnisenderMessage.');
+      }
 
+      if (empty($message->to)) {
         $message->setTo($to);
+      }
 
-        return $this->sendMessage($message);
+      return $this->sendMessage($message);
     }
 
     /**

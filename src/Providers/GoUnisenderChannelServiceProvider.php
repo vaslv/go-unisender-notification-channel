@@ -8,7 +8,7 @@ use NotificationChannels\GoUnisender\GoUnisenderApi;
 class GoUnisenderChannelServiceProvider extends ServiceProvider {
     public function register(): void {
         $this->app->singleton(GoUnisenderApi::class, function ($app) {
-            $token = $app['config']->get('services.goUnisender.api-key');
+            $token = env('GO_UNISENDER_API_KEY', NULL);
             return new GoUnisenderApi($token);
         });
     }

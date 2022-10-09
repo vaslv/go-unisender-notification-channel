@@ -39,9 +39,9 @@ class GoUnisenderMessage {
   public $skipUnsubscribe;
 
   /**
-   * Установить email адрес получателя.
+   * Установить email адрес и подстановки получателей.
    * @param string|array $to
-   * @return GoUnisenderMessage
+   * @return \NotificationChannels\GoUnisender\GoUnisenderMessage
    */
   public function setTo($to): GoUnisenderMessage {
     if (!is_string($to)) {
@@ -52,13 +52,40 @@ class GoUnisenderMessage {
       $to = [['email' => $to['email'], 'substitutions' => $to['substitutions'] ?? []]];
     }
 
+    $this->to = [];
     foreach ($to as $toItem) {
-      if (!empty($toItem['email'])) {
-        $this->to[] = $toItem;
-      } else {
-        $this->to[] = ['email' => $toItem];
-      }
+      $this->addTo($toItem);
     }
+
+    return $this;
+  }
+
+  /**
+   * Добавить получателя
+   * Examples:
+   *  addTo(['email' => 'example@info.ru', 'substitutions' => ['first_name' => 'Ivan']])
+   *  addTo('example@info.ru', ['first_name' => 'Ivan'])
+   * @param array|string $email
+   * @param array $substitutions
+   * @param bool $overwrite
+   * @return \NotificationChannels\GoUnisender\GoUnisenderMessage
+   */
+  public function addTo($email, array $substitutions = [], bool $overwrite = FALSE): GoUnisenderMessage {
+    if ($overwrite) {
+      $this->to = [];
+    }
+
+    if (is_array($email)) {
+      $to = $email;
+    } elseif (is_string($email)) {
+      $to = ['email' => $email, 'substitutions' => $substitutions];
+    }
+
+    if (empty($to['email'])) {
+      throw new GoUnisenderException('No receivers.');
+    }
+
+    $this->to[] = $to;
 
     return $this;
   }
@@ -93,7 +120,7 @@ class GoUnisenderMessage {
   }
 
   /**
-   * Установка подстановок для получателя
+   * Установка глобальных подстановок
    * @param array $substitutions
    * @param bool $global
    * @return $this

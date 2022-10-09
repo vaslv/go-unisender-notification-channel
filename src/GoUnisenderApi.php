@@ -42,14 +42,17 @@ class GoUnisenderApi {
   public function sendEmail(GoUnisenderMessage $message): void {
     $requestBody = [
       'message' => [
-        'recipients' => [
-          [
-            'email' => $message->to,
-            'substitutions' => $message->substitutions,
-          ],
-        ],
+        'recipients' => [],
       ],
     ];
+
+    foreach ($message->to as $to) {
+      $requestBody['message']['recipients'][] = $to;
+    }
+
+    if (!empty($message->substitutions)) {
+      $requestBody['message']['global_substitutions'] = $message->substitutions;
+    }
 
     if (!empty($message->templateId)) {
       $requestBody['message']['template_id'] = $message->templateId;

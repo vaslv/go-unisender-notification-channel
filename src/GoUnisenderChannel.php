@@ -5,64 +5,57 @@ namespace NotificationChannels\GoUnisender;
 use Illuminate\Notifications\Notification;
 
 class GoUnisenderChannel {
-    /**
-     * @var GoUnisenderApi
-     */
-    protected $api;
+  /**
+   * @var GoUnisenderApi
+   */
+  protected $api;
 
-    /**
-     * GoUnisenderChannel constructor.
-     *
-     * @param GoUnisenderApi $api
-     */
-    public function __construct(GoUnisenderApi $api) {
-        $this->api = $api;
+  /**
+   * GoUnisenderChannel constructor.
+   *
+   * @param GoUnisenderApi $api
+   */
+  public function __construct(GoUnisenderApi $api) {
+    $this->api = $api;
+  }
+
+  /**
+   * @param mixed $notifiable
+   * @param Notification $notification
+   * @return void
+   * @throws \Exception
+   */
+  public function send($notifiable, Notification $notification): void {
+    if (!method_exists($notification, 'toGoUnisender')) {
+      throw new \InvalidArgumentException('Method "toGoUnisender" does not exists on given notification instance.');
     }
 
-    /**
-     * @param mixed $notifiable
-     * @param Notification $notification
-     * @return array|null
-     * @throws \Exception
-     */
-    public function send($notifiable, Notification $notification): ?array {
-        $to = $notifiable->routeNotificationFor('goUnisender');
+    /** @var GoUnisenderMessage $message */
+    $message = $notification->toGoUnisender($notifiable);
 
-        if (!$to) {
-            throw new \InvalidArgumentException('No receivers.');
-        }
+    if (!($message instanceof GoUnisenderMessage)) {
+      throw new \InvalidArgumentException('Message is not an instance of GoUnisenderMessage.');
+    }
 
-        if (!method_exists($notification, 'toGoUnisender')) {
-          throw new \InvalidArgumentException('Method "toGoUnisender" does not exists on given notification instance.');
-        }
+    if (empty($message->to)) {
+      $to = $notifiable->routeNotificationFor('goUnisender');
 
-      /** @var GoUnisenderMessage $message */
-      $message = $notification->toGoUnisender($notifiable);
-
-      if (!($message instanceof GoUnisenderMessage)) {
-        throw new \InvalidArgumentException('Message is not an instance of GoUnisenderMessage.');
+      if (empty($to)) {
+        throw new \InvalidArgumentException('No receivers.');
       }
 
-      if (empty($message->to)) {
-        $message->setTo($to);
-      }
-
-      return $this->sendMessage($message);
+      $message->setTo($to);
     }
 
-    /**
-     * @param \NotificationChannels\GoUnisender\GoUnisenderMessage $message
-     * @return array|null
-     * @throws \Exception
-     */
-    protected function sendMessage(GoUnisenderMessage $message): ?array {
+    $this->sendMessage($message);
+  }
 
-        try {
-            return $this->api->sendEmail($message);
-        } catch (\Exception $e) {
-          throw $e;
-        }
-
-        return NULL;
-    }
+  /**
+   * @param \NotificationChannels\GoUnisender\GoUnisenderMessage $message
+   * @return void
+   * @throws \Exception
+   */
+  protected function sendMessage(GoUnisenderMessage $message): void {
+    $this->api->sendEmail($message);
+  }
 }

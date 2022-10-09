@@ -6,9 +6,9 @@ use NotificationChannels\GoUnisender\Exceptions\GoUnisenderException;
 
 class GoUnisenderMessage {
   /**
-   * @var string
+   * @var array
    */
-  public $to;
+  public $to = [];
   /**
    * @var array Объект, описывающий подстановки для конкретного получателя.
    */
@@ -40,11 +40,21 @@ class GoUnisenderMessage {
 
   /**
    * Установить email адрес получателя.
-   * @param string $to
+   * @param string|array $to
    * @return GoUnisenderMessage
    */
-  public function setTo(string $to): GoUnisenderMessage {
-    $this->to = $to;
+  public function setTo($to): GoUnisenderMessage {
+    if (!is_array($to)) {
+      $to = [$to];
+    }
+
+    foreach ($to as $toItem) {
+      if (is_array($toItem) && isset($toItem['email'], $toItem['substitutions'])) {
+        $this->to[] = $toItem;
+      } else {
+        $this->to[] = ['email' => $toItem];
+      }
+    }
 
     return $this;
   }

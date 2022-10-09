@@ -49,7 +49,7 @@ class GoUnisenderMessage {
     }
 
     foreach ($to as $toItem) {
-      if (is_array($toItem) && isset($toItem['email'], $toItem['substitutions'])) {
+      if (is_array($toItem) && !empty($toItem['email'])) {
         $this->to[] = $toItem;
       } else {
         $this->to[] = ['email' => $toItem];

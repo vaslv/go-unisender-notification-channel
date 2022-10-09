@@ -44,12 +44,16 @@ class GoUnisenderMessage {
    * @return GoUnisenderMessage
    */
   public function setTo($to): GoUnisenderMessage {
-    if (!is_array($to)) {
-      $to = [$to];
+    if (!is_string($to)) {
+      $to = ['email' => $to];
+    }
+
+    if (!empty($to['email'])) {
+      $to = [['email' => $to['email'], 'substitutions' => $to['substitutions'] ?? []]];
     }
 
     foreach ($to as $toItem) {
-      if (is_array($toItem) && !empty($toItem['email'])) {
+      if (!empty($toItem['email'])) {
         $this->to[] = $toItem;
       } else {
         $this->to[] = ['email' => $toItem];

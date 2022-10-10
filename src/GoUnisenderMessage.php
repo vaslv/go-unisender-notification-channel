@@ -44,7 +44,7 @@ class GoUnisenderMessage {
    * @return \NotificationChannels\GoUnisender\GoUnisenderMessage
    */
   public function setTo($to): GoUnisenderMessage {
-    if (!is_string($to)) {
+    if (is_string($to)) {
       $to = ['email' => $to];
     }
 

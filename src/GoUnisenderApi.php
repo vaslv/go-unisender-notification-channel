@@ -4,6 +4,7 @@ namespace NotificationChannels\GoUnisender;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\GuzzleException;
 use NotificationChannels\GoUnisender\Exceptions\ApiBadRequestException;
 use NotificationChannels\GoUnisender\Exceptions\ApiForbiddenException;
 use NotificationChannels\GoUnisender\Exceptions\ApiInternalServerErrorException;
@@ -12,6 +13,7 @@ use NotificationChannels\GoUnisender\Exceptions\ApiRequestFailedException;
 use NotificationChannels\GoUnisender\Exceptions\ApiRequestTooLargeException;
 use NotificationChannels\GoUnisender\Exceptions\ApiTooManyRequestsException;
 use NotificationChannels\GoUnisender\Exceptions\ApiUnathorizedException;
+use NotificationChannels\GoUnisender\Exceptions\GoUnisenderException;
 
 class GoUnisenderApi {
   public const BASE_URI = 'https://go1.unisender.ru/ru/transactional/api/v1/';
@@ -35,15 +37,15 @@ class GoUnisenderApi {
     }
 
     return $this->client = new Client([
-      'base_uri' => static::BASE_URI,
+            'base_uri' => static::BASE_URI,
     ]);
   }
 
   public function sendEmail(GoUnisenderMessage $message): void {
     $requestBody = [
-      'message' => [
-        'recipients' => [],
-      ],
+            'message' => [
+                    'recipients' => [],
+            ],
     ];
 
     foreach ($message->to as $to) {
@@ -89,42 +91,44 @@ class GoUnisenderApi {
    */
   private function request(string $uri, array $body, array $headers = []): void {
     $headers = array_merge($headers, [
-      'Content-Type' => 'application/json',
-      'Accept' => 'application/json',
-      'X-API-KEY' => $this->token,
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
+            'X-API-KEY' => $this->token,
     ]);
 
     $client = $this->getClient();
 
     try {
       $client->request('POST', $uri, [
-        'headers' => $headers,
-        'json' => $body,
+              'headers' => $headers,
+              'json' => $body,
       ]);
     } catch (BadResponseException $e) {
       switch ($e->getResponse()->getStatusCode()) {
         case '400':
-          throw new ApiBadRequestException($e, $e->getResponse());
+          throw new ApiBadRequestException($e, $e->getResponse(), $body);
         case '401':
-          throw new ApiUnathorizedException($e, $e->getResponse());
+          throw new ApiUnathorizedException($e, $e->getResponse(), $body);
         case '403':
-          throw new ApiForbiddenException($e, $e->getResponse());
+          throw new ApiForbiddenException($e, $e->getResponse(), $body);
         case '404':
-          throw new ApiNotFoundException($e, $e->getResponse());
+          throw new ApiNotFoundException($e, $e->getResponse(), $body);
         case '413':
-          throw new ApiRequestTooLargeException($e, $e->getResponse());
+          throw new ApiRequestTooLargeException($e, $e->getResponse(), $body);
         case '429':
-          throw new ApiTooManyRequestsException($e, $e->getResponse());
+          throw new ApiTooManyRequestsException($e, $e->getResponse(), $body);
         case '500':
         case '501':
         case '502':
         case '503':
         case '504':
         case '505':
-          throw new ApiInternalServerErrorException($e, $e->getResponse());
+          throw new ApiInternalServerErrorException($e, $e->getResponse(), $body);
       }
 
       throw new ApiRequestFailedException($e, $e->getResponse());
+    } catch (GuzzleException $e) {
+      throw new GoUnisenderException($e);
     }
   }
 }

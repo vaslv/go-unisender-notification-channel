@@ -38,6 +38,7 @@ class GoUnisenderApi {
 
     return $this->client = new Client([
             'base_uri' => static::BASE_URI,
+            'verify' => FALSE, // костыль из-за ошибки в сертификате у go unisender (используют Let's encrypt)
     ]);
   }
 

@@ -16,13 +16,13 @@ use NotificationChannels\GoUnisender\Exceptions\ApiUnathorizedException;
 use NotificationChannels\GoUnisender\Exceptions\GoUnisenderException;
 
 class GoUnisenderApi {
-  public const BASE_URI = 'https://go1.unisender.ru/ru/transactional/api/v1/';
-
   protected $token;
+  protected $baseUrl;
   protected $client;
 
-  public function __construct(string $token = NULL) {
+  public function __construct(string $token = NULL, string $baseUrl = 'https://go1.unisender.ru/ru/transactional/api/v1/') {
     $this->token = $token;
+    $this->baseUrl = $baseUrl;
     $this->client = NULL;
   }
 
@@ -37,7 +37,7 @@ class GoUnisenderApi {
     }
 
     return $this->client = new Client([
-            'base_uri' => static::BASE_URI,
+            'base_uri' => $this->baseUrl,
             'verify' => FALSE, // костыль из-за ошибки в сертификате у go unisender (используют Let's encrypt)
     ]);
   }

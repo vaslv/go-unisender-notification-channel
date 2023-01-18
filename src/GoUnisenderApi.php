@@ -17,17 +17,21 @@ use NotificationChannels\GoUnisender\Exceptions\GoUnisenderException;
 
 class GoUnisenderApi {
   protected $token;
-  protected $baseUrl;
+  protected $baseUrl = 'https://go1.unisender.ru/ru/transactional/api/v1/';
   protected $client;
 
-  public function __construct(string $token = NULL, string $baseUrl = 'https://go1.unisender.ru/ru/transactional/api/v1/') {
+  public function __construct(?string $token = NULL) {
     $this->token = $token;
-    $this->baseUrl = $baseUrl;
     $this->client = NULL;
   }
 
   public function setToken(string $token): void {
     $this->token = $token;
+    $this->client = NULL;
+  }
+
+  public function setBaseUrl(string $baseUrl): void {
+    $this->baseUrl = $baseUrl;
     $this->client = NULL;
   }
 

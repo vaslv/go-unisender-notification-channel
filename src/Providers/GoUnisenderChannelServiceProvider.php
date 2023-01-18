@@ -9,8 +9,14 @@ class GoUnisenderChannelServiceProvider extends ServiceProvider {
     public function register(): void {
         $this->app->singleton(GoUnisenderApi::class, static function ($app): GoUnisenderApi {
             $token = $app['config']->get('services.go_unisender.api_key');
-            $baseUrl = $app['config']->get('services.go_unisender.base_url', 'https://go1.unisender.ru/ru/transactional/api/v1/');
-            return new GoUnisenderApi($token, $baseUrl);
+            $class = new GoUnisenderApi($token);
+
+            $baseUrl = $app['config']->get('services.go_unisender.base_url');
+            if (!empty($baseUrl)) {
+              $class->setBaseUrl($baseUrl);
+            }
+
+            return $class;
         });
     }
 }

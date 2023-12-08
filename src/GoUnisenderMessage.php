@@ -4,7 +4,8 @@ namespace NotificationChannels\GoUnisender;
 
 use NotificationChannels\GoUnisender\Exceptions\GoUnisenderException;
 
-class GoUnisenderMessage {
+class GoUnisenderMessage
+{
   /**
    * @var array
    */
@@ -38,12 +39,38 @@ class GoUnisenderMessage {
    */
   public $skipUnsubscribe;
 
+  public $fromEmail;
+
+  public $fromName;
+
+  public function setSubject(string $subject)
+  {
+    $this->subject = $subject;
+
+    return $this;
+  }
+
+  public function setFromEmail(string $fromEmail)
+  {
+    $this->fromEmail = $fromEmail;
+
+    return $this;
+  }
+
+  public function setFromName(string $fromName)
+  {
+    $this->fromName = $fromName;
+
+    return $this;
+  }
+
   /**
    * Установить email адрес и подстановки получателей.
    * @param string|array $to
    * @return \NotificationChannels\GoUnisender\GoUnisenderMessage
    */
-  public function setTo($to): GoUnisenderMessage {
+  public function setTo($to): GoUnisenderMessage
+  {
     if (is_string($to)) {
       $to = ['email' => $to];
     }
@@ -70,7 +97,8 @@ class GoUnisenderMessage {
    * @param bool $overwrite
    * @return \NotificationChannels\GoUnisender\GoUnisenderMessage
    */
-  public function addTo($email, array $substitutions = [], bool $overwrite = FALSE): GoUnisenderMessage {
+  public function addTo($email, array $substitutions = [], bool $overwrite = FALSE): GoUnisenderMessage
+  {
     if ($overwrite) {
       $this->to = [];
     }
@@ -96,7 +124,8 @@ class GoUnisenderMessage {
    * @param string $type
    * @return $this
    */
-  public function setBody($body, string $type = 'html'): GoUnisenderMessage {
+  public function setBody($body, string $type = 'html'): GoUnisenderMessage
+  {
     if (is_string($body)) {
       return $this->setBody([$type => $body]);
     }
@@ -125,7 +154,8 @@ class GoUnisenderMessage {
    * @param bool $global
    * @return $this
    */
-  public function setSubstitutions(array $substitutions, bool $global = FALSE): GoUnisenderMessage {
+  public function setSubstitutions(array $substitutions, bool $global = FALSE): GoUnisenderMessage
+  {
     if ($global) {
       $this->globalSubstitutions = $substitutions;
     } else {
@@ -140,12 +170,14 @@ class GoUnisenderMessage {
    * @param string $templateId
    * @return $this
    */
-  public function setTemplateId(string $templateId): GoUnisenderMessage {
+  public function setTemplateId(string $templateId): GoUnisenderMessage
+  {
     $this->templateId = $templateId;
     return $this;
   }
 
-  public function setGlobalLanguage(string $lang): GoUnisenderMessage {
+  public function setGlobalLanguage(string $lang): GoUnisenderMessage
+  {
     if (!in_array($lang, ['be', 'de', 'en', 'es', 'fr', 'it', 'pl', 'pt', 'ru', 'ua'])) {
       throw new GoUnisenderException('Указан недопустимый язык');
     }
@@ -155,7 +187,8 @@ class GoUnisenderMessage {
     return $this;
   }
 
-  public function setSkipUnsubscribe(bool $skip): GoUnisenderMessage {
+  public function setSkipUnsubscribe(bool $skip): GoUnisenderMessage
+  {
     $this->skipUnsubscribe = $skip === TRUE ? 1 : 0;
 
     return $this;

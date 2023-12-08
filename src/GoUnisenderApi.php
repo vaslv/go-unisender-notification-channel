@@ -81,6 +81,14 @@ class GoUnisenderApi {
       $requestBody['message']['global_language'] = $message->globalLanguage;
     }
 
+    if (!empty($message->fromEmail)) {
+      $requestBody['message']['from_email'] = $message->fromEmail;
+    }
+
+    if (!empty($message->fromName)) {
+      $requestBody['message']['from_name'] = $message->fromName;
+    }
+
     if (!is_null($message->skipUnsubscribe)) {
       $requestBody['message']['skip_unsubscribe'] = $message->skipUnsubscribe;
     }

@@ -1,5 +1,5 @@
 {
-  "name": "vaslv/go-unisender-notifications-channel",
+  "name": "vaslv/go-unisender-notification-channel",
   "description": "GO Unisender Notifications Channel for Laravel",
   "type": "library",
   "license": "MIT",
